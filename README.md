@@ -32,3 +32,11 @@ Keyboard: `H` hint, `S` skip, `1`–`4` grade, `Space` accept suggested grade, `
 ## Credits
 
 See `CREDITS.md`.
+
+## Releases
+
+Each `v*` tag builds a ready-to-load zip on the [Releases page](https://github.com/cowcatbird/Openings-Local/releases). To cut a new release, bump `version` in `manifest.json`, commit, then:
+
+```bash
+git tag v1.0.1 && git push origin v1.0.1
+```
