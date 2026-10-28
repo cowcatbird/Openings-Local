@@ -260,6 +260,9 @@ window.Trainer = (() => {
       const firstStudent = T.ply === T.start || (T.ply === T.start + 1 && !isStudent(T.start));
       if (T.mode === 'learn') {
         bubble(`${note ? esc(note) : ''}<span class="instr" ${note ? '' : 'style="margin-top:0"'}>${esc(instr)}</span>`);
+        // show the move on the board as well
+        const mv = S.learnArrows !== false ? new Chess(T.chess.fen()).move(san, { sloppy: true }) : null;
+        board.setArrows(mv ? [{ from: mv.from, to: mv.to }] : []);
       } else if (T.mode === 'puzzles') {
         if (T.ply === T.start) {
           const b = line.moves[T.start - 1];
@@ -368,6 +371,7 @@ window.Trainer = (() => {
       const san = T.line.moves[T.ply];
       const mv = T.chess.move(san, { sloppy: true });
       if (!mv) { console.error('bad line', T.line); return complete(); }
+      board.setArrows([]);
       board.setPosition(T.chess, true);
       lastMoveMarks(mv);
       Sound.forMove(mv, T.chess);
@@ -397,6 +401,7 @@ window.Trainer = (() => {
     }
 
     function correct(mv) {
+      board.setArrows([]);
       Sound.forMove(mv, T.chess);
       lastMoveMarks(mv);
       board.setBadges([{ sq: mv.to, type: 'ok' }]);
@@ -679,6 +684,7 @@ window.Trainer = (() => {
         <button class="item" data-a="sound">${S.sound ? '🔊' : '🔈'} Sound ${S.sound ? `<span class="chk">${Icon('check')}</span>` : ''}</button>
         <button class="item" data-a="eval">📊 Evaluation bar ${S.evalBar ? `<span class="chk">${Icon('check')}</span>` : ''}</button>
         <button class="item" data-a="coords">🔤 Coordinates ${S.showCoords ? `<span class="chk">${Icon('check')}</span>` : ''}</button>
+        <button class="item" data-a="arrows">↗ Move arrows in Learn ${S.learnArrows !== false ? `<span class="chk">${Icon('check')}</span>` : ''}</button>
         <button class="item" data-a="auto">⏭ Auto-continue ${S.autoNext ? `<span class="chk">${Icon('check')}</span>` : ''}</button>
         <div class="sep"></div>
         <button class="item" data-a="pgn">${Icon('download')} Export course as PGN</button>
@@ -699,6 +705,7 @@ window.Trainer = (() => {
         if (a === 'eval') { S.evalBar = !S.evalBar; Store.save(); $('#evalbar', main).classList.toggle('hidden', !S.evalBar || !hasEvals); }
         if (a === 'coords') { S.showCoords = !S.showCoords; Store.save(); board.setCoords(S.showCoords); }
         if (a === 'auto') { S.autoNext = !S.autoNext; Store.save(); }
+        if (a === 'arrows') { S.learnArrows = S.learnArrows === false; Store.save(); if (T.mode === 'learn' && T.status === 'student') prompt(); }
         if (a === 'pgn') App.download(course.id + '.pgn', PGN.courseToPgn({ name: course.name, side: course.side, lines: course.lines.map(l => ({ m: l.moves.join(' '), n: l.notes, k: l.marks })) }));
         if (a === 'edit') location.hash = '#/create/' + encodeURIComponent(course.id);
         if (a === 'reset') App.confirm('Reset progress?', `This clears everything you have learned in <b>${esc(course.name)}</b>.`, 'Reset').then(ok => { if (ok) { Courses.resetProgress(course); Courses.setDepth(course, depth || 'full'); startMode('learn'); } });

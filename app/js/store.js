@@ -19,6 +19,7 @@ window.Store = (() => {
     opponentDelay: 500,      // ms before the opponent replies
     effects: true,           // stars & confetti
     autoNext: false,         // continue to the next line automatically
+    learnArrows: true,       // draw the move to play as an arrow in Learn mode
   };
 
   function blank() {

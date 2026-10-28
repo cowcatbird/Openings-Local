@@ -596,6 +596,7 @@ window.App = (() => {
         <div class="card set-card"><h2>Training</h2>
           <div class="set-row"><div class="lbl"><b>Opponent speed</b><span>Pause before the opponent replies</span></div><input type="range" min="0" max="1500" step="50" value="${s.opponentDelay}" data-range="opponentDelay"><span class="mono" id="v-opponentDelay">${s.opponentDelay}ms</span></div>
           <div class="set-row"><div class="lbl"><b>Animation speed</b></div><select class="select" style="width:150px" data-sel="animation">${['off', 'fast', 'normal', 'slow'].map(v => `<option ${s.animation === v ? 'selected' : ''}>${v}</option>`).join('')}</select></div>
+          ${sw('learnArrows', 'Move arrows in Learn', 'Draw the move to play as an arrow on the board')}
           ${sw('autoNext', 'Auto-continue', 'Start the next line automatically after finishing one')}
           ${sw('effects', 'Effects', 'Stars and confetti when you finish a line')}
         </div>
