@@ -1,42 +1,55 @@
 # Openings Local
 
-A fully offline chess opening trainer, packaged as a Chrome extension. Click the toolbar icon and the app opens in a new tab. Nothing is ever uploaded; all data lives in the browser profile.
+A ChessReps-style chess opening trainer that runs 100% offline as a Chrome extension. Click the toolbar icon and the app opens in a new tab. Nothing is uploaded; all progress lives in the browser profile.
 
 ## Install (Chrome / Edge / Brave)
 
-1. Open `chrome://extensions`.
-2. Turn on **Developer mode** (top right).
-3. Click **Load unpacked** and pick this folder (`Openings Local`).
+1. Download the latest zip from the [Releases page](https://github.com/cowcatbird/Openings-Local/releases) and unzip it, or clone this repository.
+2. Open `chrome://extensions` and turn on **Developer mode** (top right).
+3. Click **Load unpacked** and pick the folder that contains `manifest.json`.
 4. Pin the ♞ icon and click it. The app opens in its own tab.
 
-## What's inside
+## How it works
 
-- **Library**: 3,865 named openings and variations (150 families, ~1,000 gambits) from the lichess opening database. Search by name, ECO code or moves; filter by first move, ECO volume or gambits only. Add any variation to your White or Black repertoire with one click, or add a whole family.
-- **Repertoire**: your lines grouped by opening, with mastery level, due date and mistake history. Rename, edit moves on the board, switch colour, reset progress, export as PGN.
-- **Train**: spaced-repetition drills (Again / Hard / Good / Easy). Modes: Reps due, Learn new lines, Fix mistakes, All White, All Black, Random 10, Weakest lines. New lines get a guided pass with arrows, then a test from memory. Wrong moves shake the board, show the repertoire move, and count against the grade.
-- **Explore**: a free board with named continuations from the database at every position. Build your own line move by move, then add it as White or Black or drill it immediately.
-- **Add PGN**: paste or open a `.pgn` file. Multiple games, comments and nested variations are supported; each variation becomes its own line and every move is validated.
-- **Dashboard & Stats**: due counts, streak, activity heatmap, reps per day, mastery distribution, hardest lines, progress by opening.
-- **Settings**: four piece sets (cburnett, merida, alpha, staunty), seven board colours, board size, text size, dark/light theme, sound and volume, animation speed, new lines per day, guided first pass, opponent delay, auto-continue. Backup and restore everything as a single JSON file.
+Every course is a tree for one side. You always play one move; the tree branches on the replies real opponents actually choose, taken from 5.3 million rated lichess games. Popular mistakes are included, so you also learn how to punish them (for example the Fried Liver's 7...Kg8?? running into Bxd5+, Qxd5, Qxd5+ and Qxe6#).
 
-Keyboard: `H` hint, `S` skip, `1`–`4` grade, `Space` accept suggested grade, `Esc` end session. In Explore: `←` `→` `Home` `End` navigate, `F` flip.
+- **Courses**: 37 built-in courses for both colours, from the Italian, Ruy Lopez and London to gambits like the Grob, Fried Liver, Vienna, Danish, Halloween, Stafford, Englund, Albin and Benko. Every move you play comes with a coaching note.
+- **Essentials or Full Mastery**: start with the most common lines, or take on every line in the course.
+- **Learn**: play through a new line with the coach telling you each move and why.
+- **Practice**: replay learned lines from memory with no instructions. Spaced repetition decides what comes back and when; a clean run marks the line as perfected.
+- **Drill**: recall as many perfected lines in a row as you can. One mistake ends the run.
+- **Time**: a 60-second trial. Correct moves add time, and the clock speeds up after every line.
+- **Puzzles**: positions right after the opponent's mistake; find the punishing line.
+- **Lines**: browse every line in a course and jump straight into any of them.
+- **Analysis Board**: free board with an offline games explorer (move statistics from the same game database) and named continuations from the 3,865-entry opening database.
+- **Create a Course**: paste or open a PGN with variations. Comments become coaching notes, and `?` or `??` on opponent moves become puzzles. Add any line from the Analysis board or the Opening Library to your own courses.
+- **Opening Library**: every named opening and gambit, searchable by name, ECO code or moves.
+- **Progress**: day streak, activity heatmap and per-course records.
+- **Settings**: four piece sets, eight board colours, board size, text size, dark/light theme, sounds, animation speed, opponent speed, evaluation bar and effects. Backup and restore as one JSON file.
+
+Keyboard: `H` hint (press again to solve), `Esc` show modes, `←` `→` previous/next line, `Space` next line or undo a wrong move. Right-click drag draws arrows. On the Analysis board: `←` `→` `Home` `End`, and `F` flips.
 
 ## Previewing outside Chrome
 
-`node tools/serve.js` serves the app at http://localhost:8765/app/index.html (the app itself does not use any extension APIs, only the toolbar button does).
+`node tools/serve.js` serves the app at http://localhost:8765/app/index.html (the app itself does not use extension APIs; only the toolbar button does).
 
-## Rebuilding the opening database
+## Rebuilding the data
 
-`node tools/build-openings.js` regenerates `app/js/openings-data.js` from the TSV files in `tools/data` (lichess-org/chess-openings).
+All generated data is checked in, so none of this is needed to use the app.
+
+1. `node tools/build-openings.js` builds `app/js/openings-data.js` from the lichess chess-openings TSV files in `tools/data`.
+2. `node --max-old-space-size=24000 tools/build-book.js tools/cache/book.json <lichess .pgn.zst files>` counts moves from lichess monthly dumps (https://database.lichess.org).
+3. `node tools/build-explorer.js` trims the book into `app/js/book-data.js`.
+4. `node tools/build-courses.js` builds `app/js/courses-data.js` from the course definitions in `tools/courses.js`, the book, and move scores from the chessdb.cn cloud database (cached in `tools/cache/chessdb.json`). Use `--only=grob-gambit,stafford-gambit` to rebuild single courses.
+
+## Releases
+
+Each `v*` tag builds a ready-to-load zip on the Releases page. To cut a new release, bump `version` in `manifest.json`, commit, then:
+
+```bash
+git tag v2.0.1 && git push origin v2.0.1
+```
 
 ## Credits
 
 See `CREDITS.md`.
-
-## Releases
-
-Each `v*` tag builds a ready-to-load zip on the [Releases page](https://github.com/cowcatbird/Openings-Local/releases). To cut a new release, bump `version` in `manifest.json`, commit, then:
-
-```bash
-git tag v1.0.1 && git push origin v1.0.1
-```
