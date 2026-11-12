@@ -1,6 +1,6 @@
 # Openings Local
 
-A ChessReps-style chess opening trainer that runs 100% offline as a Chrome extension. Click the toolbar icon and the app opens in a new tab. Nothing is uploaded; all progress lives in the browser profile.
+A ChessReps-style chess opening trainer that runs 100% offline as a Chrome extension, an Android app or an iPhone home-screen app. Nothing is uploaded; all progress lives on your device.
 
 ## Install (Chrome / Edge / Brave)
 
@@ -8,6 +8,22 @@ A ChessReps-style chess opening trainer that runs 100% offline as a Chrome exten
 2. Open `chrome://extensions` and turn on **Developer mode** (top right).
 3. Click **Load unpacked** and pick the folder that contains `manifest.json`.
 4. Pin the ♞ icon and click it. The app opens in its own tab.
+
+## Install on iPhone or iPad
+
+1. Open https://cowcatbird.github.io/Openings-Local/ in Safari.
+2. Tap **Share**, then **Add to Home Screen**.
+3. Open **Openings** from your home screen. It works offline from then on.
+
+## Install on Android
+
+1. On your phone, open the [Releases page](https://github.com/cowcatbird/Openings-Local/releases) and download the `.apk` file.
+2. Open the downloaded file. When Android asks, allow your browser to install apps.
+3. Tap **Install**, then open **Openings Local** from your home screen.
+
+The Android app has no internet permission, so it cannot send anything anywhere.
+
+Progress stays on each device. To move it to another device, open **Settings → Backup**, export, and import the file on the other device.
 
 ## How it works
 
@@ -33,6 +49,10 @@ Keyboard: `H` hint (press again to solve), `Esc` show modes, `←` `→` previou
 
 `node tools/serve.js` serves the app at http://localhost:8765/app/index.html (the app itself does not use extension APIs; only the toolbar button does).
 
+To preview the offline web version, run `node tools/build-web.js`. It copies `app/` to `_site/` and adds the service worker that caches every file. Serve `_site/` with any static server, for example `npx serve _site`.
+
+The Android project lives in `android/` and packages `app/` as its assets. `gradle -p android assembleRelease` builds it with Gradle 8.11.1 and JDK 17.
+
 ## Rebuilding the data
 
 All generated data is checked in, so none of this is needed to use the app.
@@ -44,7 +64,7 @@ All generated data is checked in, so none of this is needed to use the app.
 
 ## Releases
 
-Each `v*` tag builds a ready-to-load zip on the Releases page. To cut a new release, bump `version` in `manifest.json`, commit, then:
+Each `v*` tag builds a ready-to-load zip and a signed Android `.apk` on the Releases page, and deploys the web version to GitHub Pages. The Android version number comes from `manifest.json` too. To cut a new release, bump `version` in `manifest.json`, commit, then:
 
 ```bash
 git tag v2.0.1 && git push origin v2.0.1
