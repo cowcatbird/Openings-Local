@@ -32,7 +32,7 @@ jobs:
       - name: Build extension zip
         run: |
           mkdir -p dist/openings-local
-          cp -r manifest.json background.js app icons README.md CREDITS.md dist/openings-local/
+          cp -r manifest.json background.js app README.md CREDITS.md dist/openings-local/
           cd dist/openings-local
           zip -r -9 "../${{ steps.meta.outputs.zip }}" . -x "*.DS_Store" -x "Thumbs.db"
           cd ..
