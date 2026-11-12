@@ -646,6 +646,10 @@ window.App = (() => {
     Sound.preload();
     $('#theme-toggle').onclick = () => { Store.settings.appearance = Store.settings.appearance === 'dark' ? 'light' : 'dark'; Store.save(); applySettings(); };
     route();
+    // sw.js exists only in the GitHub Pages build (tools/build-web.js); the extension and the Android WebView serve app/ directly.
+    if ('serviceWorker' in navigator && isSecureContext && /^https?:$/.test(location.protocol) && location.hostname !== 'appassets.androidplatform.net') {
+      navigator.serviceWorker.register('sw.js').catch(() => {});
+    }
   }
 
   return { boot, toast, modal, confirm: confirmDlg, download, copy, go, applySettings, updateStreak, DB, detectOpening };
