@@ -54,6 +54,7 @@ window.App = (() => {
   function closeMenu() { if (openMenuEl) { openMenuEl.remove(); openMenuEl = null; document.removeEventListener('mousedown', onMenuDoc); } }
 
   function download(filename, text, type = 'text/plain') {
+    if (window.OpeningsAndroid) return OpeningsAndroid.save(filename, text, type);
     const a = document.createElement('a');
     a.href = URL.createObjectURL(new Blob([text], { type }));
     a.download = filename; document.body.appendChild(a); a.click();
