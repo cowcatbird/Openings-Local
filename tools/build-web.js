@@ -30,8 +30,12 @@ const sw = `const VERSION = ${JSON.stringify(VERSION)};
 const FILES = ${JSON.stringify(FILES, null, 2)};
 const CACHE = 'openings-' + VERSION;
 
+// cache: 'reload' skips the HTTP cache, which can hold partial (206) copies of the
+// sounds from the page's <audio> preloads; Cache.addAll rejects partial responses.
 self.addEventListener('install', (e) => {
-  e.waitUntil(caches.open(CACHE).then(c => c.addAll(FILES)).then(() => self.skipWaiting()));
+  e.waitUntil(caches.open(CACHE)
+    .then(c => c.addAll(FILES.map(f => new Request(f, { cache: 'reload' }))))
+    .then(() => self.skipWaiting()));
 });
 
 self.addEventListener('activate', (e) => {
