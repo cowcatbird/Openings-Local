@@ -9,10 +9,20 @@ permissions:
   contents: write
 
 jobs:
+  apk:
+    uses: ./.github/workflows/android.yml
+    secrets: inherit
+
   release:
+    needs: apk
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: apk
+          path: dist
 
       - name: Read version from manifest
         id: meta
@@ -20,6 +30,7 @@ jobs:
           VERSION=$(node -p "require('./manifest.json').version")
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
           echo "zip=openings-local-v$VERSION.zip" >> "$GITHUB_OUTPUT"
+          echo "apk=openings-local-v$VERSION.apk" >> "$GITHUB_OUTPUT"
 
       - name: Check tag matches manifest version
         run: |
@@ -44,15 +55,25 @@ jobs:
           cat > dist/notes.md <<'NOTES'
           ## Openings Local ${{ steps.meta.outputs.version }}
 
-          Fully offline chess opening trainer, packaged as a Chrome extension.
+          Fully offline chess opening trainer for Chrome, Android and iPhone. Nothing is uploaded; progress stays on each device.
 
-          ### Install
+          ### Chrome, Edge or Brave
           1. Download `${{ steps.meta.outputs.zip }}` below and unzip it.
           2. Open `chrome://extensions` and turn on **Developer mode**.
           3. Click **Load unpacked** and select the unzipped `openings-local` folder.
           4. Pin the ♞ icon and click it to open the app in a new tab.
 
-          Works in Chrome, Edge and Brave. All data stays in the browser profile; nothing is uploaded.
+          ### Android
+          1. On your phone, download `${{ steps.meta.outputs.apk }}` below.
+          2. Open it. When Android asks, allow your browser to install apps.
+          3. Tap **Install**, then open **Openings Local** from your home screen.
+
+          ### iPhone or iPad
+          1. Open https://cowcatbird.github.io/Openings-Local/ in Safari.
+          2. Tap **Share**, then **Add to Home Screen**.
+          3. Open it from your home screen. It works offline after that.
+
+          To move progress between devices, use **Settings → Backup**: export on one device and import on the other.
           NOTES
 
       - name: Create GitHub Release
@@ -61,5 +82,6 @@ jobs:
         run: |
           gh release create "$GITHUB_REF_NAME" \
             "dist/${{ steps.meta.outputs.zip }}" \
+            "dist/${{ steps.meta.outputs.apk }}" \
             --title "Openings Local v${{ steps.meta.outputs.version }}" \
             --notes-file dist/notes.md
