@@ -557,7 +557,7 @@ window.App = (() => {
       cells.push(`<i class="l${r === 0 ? 0 : r < 5 ? 1 : r < 15 ? 2 : r < 30 ? 3 : 4}" title="${k}: ${plural(r, 'line')}"></i>`);
     }
     main.innerHTML = `<div class="page">
-      <div class="page-head"><div><h1>${Icon('trophy')} Your progress</h1><div class="sub">Personal records, all stored on this computer.</div></div></div>
+      <div class="page-head"><div><h1>${Icon('trophy')} Your progress</h1><div class="sub">Personal records, all stored on this device.</div></div></div>
       <div class="stat-grid">
         <div class="stat"><span class="v" style="color:#fb923c">${Courses.streak()}</span><span class="l">Day streak · best ${Store.state.meta.bestStreak || 0}</span></div>
         <div class="stat"><span class="v">${today.lines}</span><span class="l">Lines played today</span></div>
@@ -582,12 +582,12 @@ window.App = (() => {
     const s = Store.settings;
     const sw = (k, label, sub) => `<div class="set-row"><div class="lbl"><b>${label}</b><span>${sub}</span></div><label class="switch"><input type="checkbox" data-sw="${k}" ${s[k] ? 'checked' : ''}><span></span></label></div>`;
     main.innerHTML = `<div class="page">
-      <div class="page-head"><div><h1>${Icon('settings')} Settings</h1><div class="sub">Everything is saved automatically on this computer.</div></div></div>
+      <div class="page-head"><div><h1>${Icon('settings')} Settings</h1><div class="sub">Everything is saved automatically on this device.</div></div></div>
       <div class="set-grid"><div>
         <div class="card set-card"><h2>Board & pieces</h2>
           <div class="set-row"><div class="lbl"><b>Piece set</b><span>Bundled lichess sets</span></div></div>
           <div class="piece-sets" style="padding-bottom:14px">${['cburnett', 'merida', 'alpha', 'staunty'].map(p => `<button class="piece-set ${s.pieceSet === p ? 'on' : ''}" data-ps="${p}"><img src="pieces/${p}/wN.svg" alt=""><img src="pieces/${p}/bQ.svg" alt=""><span>${p}</span></button>`).join('')}</div>
-          <div class="set-row"><div class="lbl"><b>Board colours</b></div><div class="swatches">${Object.entries(THEMES).map(([k, [l, d]]) => `<button class="board-theme-preview ${s.boardTheme === k ? 'on' : ''}" data-theme="${k}" style="--l:${l};--d:${d}" title="${k}"><i></i><i></i><i></i><i></i></button>`).join('')}</div></div>
+          <div class="set-row"><div class="lbl"><b>Board colours</b></div><div class="swatches">${Object.entries(THEMES).map(([k, [l, d]]) => `<button class="board-theme-preview ${s.boardTheme === k ? 'on' : ''}" data-theme="${k}" style="--l:${l};--d:${d}" title="${k}"></button>`).join('')}</div></div>
           <div class="set-row"><div class="lbl"><b>Board size limit</b><span>"fit" fills the screen</span></div><input type="range" min="0" max="1000" step="40" value="${s.boardMax}" data-range="boardMax"><span class="mono" id="v-boardMax">${s.boardMax ? s.boardMax + 'px' : 'fit'}</span></div>
           ${sw('showCoords', 'Coordinates', 'Files and ranks inside the squares')}
           ${sw('showLegal', 'Legal move dots', 'Show where the selected piece can go')}
@@ -614,7 +614,7 @@ window.App = (() => {
           <div class="set-row"><div class="lbl"><b>Reset everything</b><span>Deletes all progress and your own courses</span></div><button class="btn danger" id="d-reset">${Icon('trash')} Reset</button></div>
         </div>
       </div>
-      <div class="card" style="position:sticky;top:80px"><h3 style="margin-bottom:12px">Preview</h3><div id="prev-board" style="--bs:320px;width:100%;aspect-ratio:1"></div></div>
+      <div class="card set-preview"><h3 style="margin-bottom:12px">Preview</h3><div id="prev-board" style="--bs:320px;width:100%;aspect-ratio:1"></div></div>
       </div></div>`;
     const prev = new Board($('#prev-board'), { pieceSet: s.pieceSet, coords: s.showCoords });
     const pc = new Chess(); ['e4', 'e5', 'Nf3', 'Nc6', 'Bc4', 'Nf6', 'Ng5', 'd5'].forEach(m => pc.move(m));
